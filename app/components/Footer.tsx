@@ -1,6 +1,12 @@
-const Footer = () => {
+// components/Footer.tsx
+
+interface FooterProps {
+  className?: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
-    <footer className="bg-gray-800 text-white p-4">
+    <footer className={`bg-gray-200 p-4 ${className}`}>
       <div className="container mx-auto text-center">
         <p>© {new Date().getFullYear()} Your App Name. All rights reserved.</p>
         <div className="mt-2">
