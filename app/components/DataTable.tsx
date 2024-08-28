@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
 interface Column<T> {
-  key: keyof T;
+  key: Extract<keyof T, string>;
   header: string;
 }
 
@@ -42,9 +42,8 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
     if (data.length > 0) {
       const firstItem = data[0];
       const detectedColumns: Column<T>[] = Object.keys(firstItem).map((key) => ({
-        key: key as keyof T,
-        // header: key.charAt(0).toUpperCase() + key.slice(1),
-        header: formatColumnTitle(key), // Use the new formatting function here
+        key: key as Extract<keyof T, string>,
+        header: formatColumnTitle(key),
       }));
       setColumns(detectedColumns);
       setSortColumn(detectedColumns[0].key);
@@ -62,8 +61,15 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
   const sortedData = useMemo(() => {
     if (!sortColumn) return filteredData;
     return [...filteredData].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn]) return sortDirection === 'asc' ? -1 : 1;
-      if (a[sortColumn] > b[sortColumn]) return sortDirection === 'asc' ? 1 : -1;
+      const aValue = a[sortColumn];
+      const bValue = b[sortColumn];
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc'
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
       return 0;
     });
   }, [filteredData, sortColumn, sortDirection]);
@@ -84,16 +90,23 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
     }
   };
 
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const [newSortColumn, newSortDirection] = event.target.value.split(':');
+    setSortColumn(newSortColumn as Extract<keyof T, string>);
+    setSortDirection(newSortDirection as 'asc' | 'desc');
+  };
+
+
   if (data.length === 0) {
     return <div className="text-center py-4">No data available</div>;
   }
 
-    const renderMobileView = () => (
+  const renderMobileView = () => (
     <div className="space-y-4">
       {paginatedData.map((item, index) => (
         <div key={index} className="bg-white p-4 rounded shadow">
           {columns.map((column) => (
-            <div key={column.key as string} className="flex justify-between py-1">
+            <div key={String(column.key)} className="flex justify-between py-1">
               <span className="font-medium">{column.header}:</span>
               <span>{item[column.key]}</span>
             </div>
@@ -103,43 +116,43 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
     </div>
   );
 
-    const renderDesktopView = () => (
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
-          <thead className="bg-gray-100">
-            <tr>
+  const renderDesktopView = () => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white">
+        <thead className="bg-gray-100">
+          <tr>
+            {columns.map((column) => (
+              <th
+                key={column.key as string}
+                onClick={() => handleSort(column.key)}
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              >
+                {column.header}
+                {sortColumn === column.key && (
+                  <span className="ml-1">
+                    {sortDirection === 'asc' ? '▲' : '▼'}
+                  </span>
+                )}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {paginatedData.map((item, rowIndex) => (
+            <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
               {columns.map((column) => (
-                <th
+                <td
                   key={column.key as string}
-                  onClick={() => handleSort(column.key)}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
                 >
-                  {column.header}
-                  {sortColumn === column.key && (
-                    <span className="ml-1">
-                      {sortDirection === 'asc' ? '▲' : '▼'}
-                    </span>
-                  )}
-                </th>
+                  {item[column.key]}
+                </td>
               ))}
             </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedData.map((item, rowIndex) => (
-              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                {columns.map((column) => (
-                  <td
-                    key={column.key as string}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                  >
-                    {item[column.key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 
 
@@ -153,7 +166,26 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
         className="w-full p-2 mb-4 border border-gray-300 rounded"
       />
 
-         {/* Mobile view */}
+      {/* Add sorting dropdown for mobile view */}
+      <div className="lg:hidden mb-4">
+        <select
+          onChange={handleSortChange}
+          className="w-full p-2 border border-gray-300 rounded"
+        >
+          {columns.map((column) => (
+            <React.Fragment key={String(column.key)}>
+              <option value={`${String(column.key)}:asc`}>
+                Sort by {column.header} (Ascending)
+              </option>
+              <option value={`${String(column.key)}:desc`}>
+                Sort by {column.header} (Descending)
+              </option>
+            </React.Fragment>
+          ))}
+        </select>
+      </div>
+
+      {/* Mobile view */}
       <div className="lg:hidden">
         {renderMobileView()}
       </div>

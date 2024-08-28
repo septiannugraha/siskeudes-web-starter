@@ -39,3 +39,5 @@ public/sw.js.map
 public/worker/index.js
 public/worker/index.js.map
 diff.txt
+public/worker/index.js
+public/worker/index-o.js

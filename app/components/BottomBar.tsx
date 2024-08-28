@@ -1,10 +1,11 @@
 // components/BottomBar.tsx
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { menuItems } from '../data/menuItems';
 
-
 const BottomBar: React.FC = () => {
+  const pathname = usePathname();
   const bottomBarItems = menuItems.filter(item => item.showInBottomBar);
 
   return (
@@ -12,7 +13,14 @@ const BottomBar: React.FC = () => {
       <ul className="flex justify-around">
         {bottomBarItems.map((item) => (
           <li key={item.path}>
-            <Link href={item.path} className="flex flex-col items-center p-2 text-gray-600 hover:text-gray-900">
+            <Link
+              href={item.path}
+              className={`flex flex-col items-center p-2 ${
+                pathname.startsWith(item.path)
+                  ? 'text-blue-500'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
               {item.icon && <item.icon className="text-xl mb-1" />}
               <span className="text-xs">{item.name}</span>
             </Link>
@@ -22,6 +30,5 @@ const BottomBar: React.FC = () => {
     </nav>
   );
 };
-
 
 export default BottomBar;
