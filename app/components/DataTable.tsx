@@ -12,6 +12,24 @@ interface DataTableProps<T> {
   data: T[];
 }
 
+const formatColumnTitle = (key: string): string => {
+  // Special case for "Id" at the end of the string
+  if (key.endsWith('Id')) {
+    key = key.slice(0, -2) + 'ID';
+  }
+
+  // Convert camelCase to space-separated words
+  let formatted = key
+    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()) // Capitalize the first letter
+    .trim(); // Remove leading/trailing spaces
+
+  // Special case to keep "ID" together
+  formatted = formatted.replace(/ I D/g, ' ID');
+
+  return formatted;
+};
+
 function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
   const [columns, setColumns] = useState<Column<T>[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,7 +43,8 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
       const firstItem = data[0];
       const detectedColumns: Column<T>[] = Object.keys(firstItem).map((key) => ({
         key: key as keyof T,
-        header: key.charAt(0).toUpperCase() + key.slice(1),
+        // header: key.charAt(0).toUpperCase() + key.slice(1),
+        header: formatColumnTitle(key), // Use the new formatting function here
       }));
       setColumns(detectedColumns);
       setSortColumn(detectedColumns[0].key);
@@ -69,15 +88,22 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
     return <div className="text-center py-4">No data available</div>;
   }
 
-  return (
-    <div className="container mx-auto p-4">
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-      />
+    const renderMobileView = () => (
+    <div className="space-y-4">
+      {paginatedData.map((item, index) => (
+        <div key={index} className="bg-white p-4 rounded shadow">
+          {columns.map((column) => (
+            <div key={column.key as string} className="flex justify-between py-1">
+              <span className="font-medium">{column.header}:</span>
+              <span>{item[column.key]}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
+    const renderDesktopView = () => (
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100">
@@ -114,6 +140,30 @@ function DataTable<T extends Record<string, any>>({ data }: DataTableProps<T>) {
           </tbody>
         </table>
       </div>
+  );
+
+
+  return (
+    <div className="container mx-auto p-4">
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full p-2 mb-4 border border-gray-300 rounded"
+      />
+
+         {/* Mobile view */}
+      <div className="lg:hidden">
+        {renderMobileView()}
+      </div>
+
+      {/* Desktop view */}
+      <div className="hidden lg:block">
+        {renderDesktopView()}
+      </div>
+
+      {/* Pagination controls */}
       <div className="flex justify-between items-center mt-4">
         <button
           className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"

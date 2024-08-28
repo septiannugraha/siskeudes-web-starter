@@ -12,7 +12,6 @@ interface AppShellProps {
 }
 
 const AppShell: React.FC<AppShellProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -22,13 +21,12 @@ const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   }, []);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <div className="flex h-screen">
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar />
       <div className="flex flex-col flex-grow">
-        <Header onMenuClick={toggleSidebar} />
+        <Header />
         <main className="flex-grow overflow-auto p-4 pb-16 lg:pb-4">
           {children}
         </main>
