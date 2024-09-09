@@ -1,7 +1,7 @@
 // data/menuItems.ts
 
 import { IconType } from 'react-icons';
-import { FiHome, FiList, FiBookOpen, FiDollarSign, FiCalendar, FiSettings } from 'react-icons/fi';
+import { FiHome, FiList, FiBookOpen, FiDollarSign, FiCalendar, FiSettings, FiFileText, FiUsers, FiBook, FiHelpCircle } from 'react-icons/fi';
 
 export interface MenuItem {
   name: string;
@@ -11,28 +11,25 @@ export interface MenuItem {
   subItems?: MenuItem[];
 }
 
-export const menuItems: MenuItem[] = [
-  { name: 'Home', path: '/', icon: FiHome, showInBottomBar: true },
+export const penganggaranMenuItems: MenuItem[] = [
+  { name: 'Penganggaran', path: '/penganggaran', icon: FiFileText },
   {
     name: 'Penatausahaan',
-    path: '/penatausahaan',
-    icon: FiDollarSign,
-    showInBottomBar: true,
+    path: '/penganggaran/penatausahaan',
+    icon: FiUsers,
     subItems: [
-      { name: 'Pendapatan', path: '/penatausahaan/pendapatan', icon: FiList },
-      { name: 'Pengeluaran', path: '/penatausahaan/pengeluaran', icon: FiList },
+      { name: 'Saldo Awal', path: '/penganggaran/penatausahaan/saldo-awal', icon: FiFileText },
+      { name: 'Penerimaan Desa', path: '/penganggaran/penatausahaan/penerimaan-desa', icon: FiFileText },
+      { name: 'SPP Kegiatan', path: '/penganggaran/penatausahaan/spp-kegiatan', icon: FiFileText },
+      { name: 'Pencairan SPP', path: '/penganggaran/penatausahaan/pencairan-spp', icon: FiFileText },
+      { name: 'SPJ Kegiatan', path: '/penganggaran/penatausahaan/spj-kegiatan', icon: FiFileText },
+      { name: 'Pengembalian', path: '/penganggaran/penatausahaan/pengembalian', icon: FiFileText },
+      { name: 'Penyetoran Pajak', path: '/penganggaran/penatausahaan/penyetoran-pajak', icon: FiFileText },
+      { name: 'Mutasi Kas', path: '/penganggaran/penatausahaan/mutasi-kas', icon: FiFileText },
     ]
   },
-  {
-    name: 'Perencanaan',
-    path: '/perencanaan',
-    icon: FiCalendar,
-    showInBottomBar: true,
-    subItems: [
-      { name: 'Anggaran', path: '/perencanaan/anggaran', icon: FiBookOpen },
-      { name: 'Kegiatan', path: '/perencanaan/kegiatan', icon: FiBookOpen },
-    ]
-  },
-  { name: 'Daftar', path: '/daftar', icon: FiList },
-  { name: 'Example', path: '/contoh', icon: FiSettings, showInBottomBar: true },
+  { name: 'Pembukuan', path: '/penganggaran/pembukuan', icon: FiBook },
+  { name: 'Laporan', path: '/penganggaran/laporan', icon: FiFileText },
+  { name: 'Pengaturan', path: '/penganggaran/pengaturan', icon: FiSettings },
+  { name: 'Bantuan', path: '/penganggaran/bantuan', icon: FiHelpCircle },
 ];

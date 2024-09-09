@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { menuItems } from '../data/menuItems';
+import { penganggaranMenuItems } from '../data/menuItems';
 
 const BottomBar: React.FC = () => {
   const pathname = usePathname();
-  const bottomBarItems = menuItems.filter(item => item.showInBottomBar);
+  const bottomBarItems = penganggaranMenuItems.filter(item => item.showInBottomBar);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 lg:hidden">

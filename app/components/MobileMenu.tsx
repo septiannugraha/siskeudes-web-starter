@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { menuItems, MenuItem } from '../data/menuItems';
+import { penganggaranMenuItems, MenuItem } from '../data/menuItems';
 
 const MobileMenuItem: React.FC<{ item: MenuItem, level?: number }> = ({ item, level = 0 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +53,7 @@ const MobileMenu: React.FC = () => {
               Close
             </button>
             <ul className="space-y-2">
-              {menuItems.map((item) => (
+              {penganggaranMenuItems.map((item) => (
                 <MobileMenuItem key={item.path} item={item} />
               ))}
             </ul>

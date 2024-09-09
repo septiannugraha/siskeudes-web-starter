@@ -1,17 +1,20 @@
-import Link from 'next/link';
+// components/Header.tsx
+import React from 'react';
+import Image from 'next/image';
+import Breadcrumb from './Breadcrumb';
 
 const Header: React.FC = () => {
   return (
-    <header className="bg-blue-600 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Siskeudes Web Starter</h1>
-        <nav className="hidden lg:block">
-          <ul className="flex space-x-4">
-            <li><Link href="/" className="hover:underline">Home</Link></li>
-            <li><Link href="/contoh" className="hover:underline">Example</Link></li>
-          </ul>
-        </nav>
+    <header className="bg-white shadow-md p-4">
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-2xl font-bold">Penganggaran dan Penatausahaan</h1>
+        <div className="flex items-center">
+          <span className="mr-2">Pemerintah Kabupaten Deli Serdang</span>
+          <Image src="/images/logo_pemda.png" alt="Logo Pemda" width={50} height={50} />
+        </div>
       </div>
+      <Breadcrumb />
+      <p className="text-sm text-gray-600 mt-2">Tahun Anggaran 2024</p>
     </header>
   );
 };

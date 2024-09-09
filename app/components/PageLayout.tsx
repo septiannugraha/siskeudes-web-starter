@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { menuItems } from '../data/menuItems';
+import { penganggaranMenuItems } from '../data/menuItems';
 import TabSubmenu from './TabSubmenu';
 
 interface PageLayoutProps {
@@ -12,7 +12,7 @@ interface PageLayoutProps {
 const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
     const pathname = usePathname();
     const currentMainPath = '/' + pathname.split('/')[1];
-    const currentMenuItem = menuItems.find(item => item.path === currentMainPath);
+    const currentMenuItem = penganggaranMenuItems.find(item => item.path === currentMainPath);
 
     return (
         <div className="flex flex-col h-full">
